@@ -8,13 +8,16 @@
   <version>1.0-SNAPSHOT</version>
   <name>sauce_labs_selenium</name>
   <url>http://maven.apache.org</url>
+  <properties>
+    <maven.compiler.release>17</maven.compiler.release>
+  </properties>
   <dependencies>
     <!-- Source: https://mvnrepository.com/artifact/org.testng/testng -->
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
       <version>7.12.0</version>
-      <scope>test</scope>
+      
     </dependency>
     <!-- Source: https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java -->
     <dependency>
