@@ -28,7 +28,7 @@ public class AbstractComponents {
         this.driver = driver;
     }
 
-public String getProperty(String key) {
+    public static String getProperty(String key) {
         return properties.getProperty(key);
     }
     

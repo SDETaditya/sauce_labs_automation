@@ -25,7 +25,8 @@ public class CartPage extends AbstractComponents {
                 .anyMatch(cartProduct -> cartProduct.getText().equalsIgnoreCase(productName));
     }
 
-    public void goToCheckout() {
+    public CheckoutPage goToCheckout() {
         checkoutButton.click();
+        return new CheckoutPage(driver);
     }
 }
