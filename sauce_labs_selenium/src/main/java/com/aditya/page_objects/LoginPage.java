@@ -1,33 +1,17 @@
 package com.aditya.page_objects;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.Properties;
-
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
+import com.aditya.abstract_components.AbstractComponents;
 
-public class LoginPage {
-    WebDriver driver;
-    Properties properties;
+public class LoginPage extends AbstractComponents {
 
     public LoginPage(WebDriver driver){
-        this.driver = driver;
+        super(driver);
         PageFactory.initElements(driver, this);
-        
-        properties = new Properties();
-        try (FileInputStream fis = new FileInputStream(System.getProperty("user.dir")
-                + "/sauce_labs_selenium/src/main/java/com/aditya/resources/GlobalData.properties")) {
-            properties.load(fis);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
-// driver.findElement(By.id("user-name")).sendKeys(login_as_standard_user_email);
-//         driver.findElement(By.id("password")).sendKeys((login_password));
-//         driver.findElement(By.id("login-button")).click();
 
     @FindBy(id = "user-name")
     WebElement standard_user_name;

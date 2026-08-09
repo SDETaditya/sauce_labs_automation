@@ -17,7 +17,12 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 
-public class StandaloneTestCopy {
+import com.aditya.abstract_components.AbstractComponents;
+import com.aditya.page_objects.LoginPage;
+import com.aditya.page_objects.CataloguePage;
+import com.aditya.page_objects.CartPage;
+
+public class StandaloneTestCopy{
 
 public static void main(String[] args) throws IOException, InterruptedException {
         String productName = "Sauce Labs Fleece Jacket";
@@ -31,40 +36,31 @@ public static void main(String[] args) throws IOException, InterruptedException 
         WebDriver driver = new ChromeDriver(options);
         driver.manage().window().maximize();
         
-        Properties prop = new Properties();
-        FileInputStream fis = new FileInputStream(System.getProperty("user.dir")
-                + "/sauce_labs_selenium/src/main/java/com/aditya/resources/GlobalData.properties");
-        prop.load(fis);
-        String login_as_standard_user_email = prop.getProperty("std_user_email");
-        String login_password = prop.getProperty("password");
         
-        driver.get("https://www.saucedemo.com/");
+        LoginPage loginPage = new LoginPage(driver);
+        String login_as_standard_user_email = loginPage.getProperty("std_user_email");
+        String login_password = loginPage.getProperty("password");
+        loginPage.goTo();
+        loginPage.loginApplication(login_as_standard_user_email, login_password);
 
-        driver.findElement(By.id("user-name")).sendKeys(login_as_standard_user_email);
-        driver.findElement(By.id("password")).sendKeys((login_password));
-        driver.findElement(By.id("login-button")).click();
 
-        List<WebElement> products = driver.findElements(By.xpath("//div[@data-test='inventory-item']"));
-        WebElement productElement = products.stream()
-                .filter(product -> product.findElement(By.xpath(".//div[@data-test='inventory-item-name']"))
-                        .getText().equals(productName))
-                .findFirst().orElse(null);
-        productElement.findElement(By.xpath(".//button[text()='Add to cart']")).click();
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        wait.until(ExpectedConditions
-                .elementToBeClickable(driver.findElement(By.xpath("//a[@data-test='shopping-cart-link']"))));
-        driver.findElement(By.xpath("//a[@data-test='shopping-cart-link']")).click();
-        List<WebElement> cartProducts = driver.findElements(By.xpath("//div[@data-test='inventory-item-name']"));
 
-        Boolean isExpectedItemInCart = cartProducts.stream()
-                .anyMatch(cartProduct -> cartProduct.getText().equals(productName));
+        CataloguePage cataloguePage = new CataloguePage(driver);
+        cataloguePage.addProductToCart(productName);
+        CartPage cartPage = cataloguePage.goToCart();
+
+        Boolean isExpectedItemInCart = cartPage.verifyProductDisplay(productName);
         Assert.assertTrue(isExpectedItemInCart);
-        driver.findElement(By.id("checkout")).click();
+        cartPage.goToCheckout();
+
+        
         driver.findElement(By.id("first-name")).sendKeys("Aditya");
         driver.findElement(By.id("last-name")).sendKeys("Pathak");
         driver.findElement(By.id("postal-code")).sendKeys("474020");
         driver.findElement(By.id("continue")).click();
         driver.findElement(By.id("finish")).click();
+
+        
         String message = driver.findElement(By.xpath("//h2[data-test='complete-header']")).getText();
         Assert.assertTrue(message.equalsIgnoreCase("Thank you for your order!"));
         driver.close();
