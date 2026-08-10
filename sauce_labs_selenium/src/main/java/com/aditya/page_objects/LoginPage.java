@@ -22,10 +22,17 @@ public class LoginPage extends AbstractComponents {
     @FindBy(id = "login-button")
     WebElement login_button;
 
+    @FindBy(css = "h3[data-test='error']")
+    WebElement errorMessage;
+
     public void loginApplication(String username, String password){
         standard_user_name.sendKeys(username);
         passwordElement.sendKeys(password);
         login_button.click();
+    }
+
+    public String getErrorMessage() {
+        return errorMessage.getText();
     }
 
     public void goTo(){

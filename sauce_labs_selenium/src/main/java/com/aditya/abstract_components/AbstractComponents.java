@@ -18,7 +18,7 @@ public class AbstractComponents {
     static {
         properties = new Properties();
         try (FileInputStream fis = new FileInputStream(System.getProperty("user.dir")
-                + "/sauce_labs_selenium/src/main/java/com/aditya/resources/GlobalData.properties")) {
+                + "/src/main/java/com/aditya/resources/GlobalData.properties")) {
             properties.load(fis);
         } catch (IOException e) {
             e.printStackTrace();
