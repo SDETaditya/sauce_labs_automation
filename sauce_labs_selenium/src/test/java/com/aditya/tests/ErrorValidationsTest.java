@@ -6,25 +6,26 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import com.aditya.BaseTest;
+import com.aditya.abstract_components.AbstractComponents;
 import com.aditya.page_objects.CataloguePage;
 
 public class ErrorValidationsTest extends BaseTest {
 
-    @Test
+    @Test(groups = {"ErrorValidation"})
     public void loginErrorValidation() throws IOException, InterruptedException {
 
-        String incorrect_user = loginPage.getProperty("incorrect_user");
-        String incorrect_password = loginPage.getProperty("incorrect_password");
+        String incorrect_user = AbstractComponents.getProperty("incorrect_user");
+        String incorrect_password = AbstractComponents.getProperty("incorrect_password");
         loginPage.loginApplication(incorrect_user, incorrect_password);
 
         String expectedErrorMessage = "Epic sadface: Username and password do not match any user in this service";
         Assert.assertEquals(loginPage.getErrorMessage(), expectedErrorMessage);
     }
 
-    @Test
+    @Test(groups = {"ErrorValidation"})
     public void catalogueCountValidation() throws IOException, InterruptedException {
-        String login_as_standard_user_email = loginPage.getProperty("std_user_email");
-        String login_password = loginPage.getProperty("password");
+        String login_as_standard_user_email = AbstractComponents.getProperty("std_user_email");
+        String login_password = AbstractComponents.getProperty("password");
         loginPage.loginApplication(login_as_standard_user_email, login_password);
 
         CataloguePage cataloguePage = new CataloguePage(driver);

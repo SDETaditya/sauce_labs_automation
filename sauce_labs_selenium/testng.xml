@@ -1,9 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
-<suite name="Suite">
-  <test thread-count="5" name="Test">
+<suite name="Suite" parallel="tests">
+  <groups>
+    <run>
+      <include name="ErrorValidation"></include>
+    </run>
+  </groups>
+  <test thread-count="5" name="Purchase Order Test" >
     <classes>
       <class name="com.aditya.tests.StandaloneTestCopy"/>
+    </classes>
+  </test>
+  <test thread-count="5" name="Erro Validation Test" >
+    <classes>
       <class name="com.aditya.tests.ErrorValidationsTest"/>
     </classes>
   </test>
