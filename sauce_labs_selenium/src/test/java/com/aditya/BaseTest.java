@@ -30,13 +30,17 @@ public class BaseTest {
         String browserName = browserNameFromMaven != null ? browserNameFromMaven : browserNameFromPropertiesFile;
 
         WebDriver localDriver = null;
-        if (browserName.equalsIgnoreCase("chrome")) {
+        if (browserName.contains("chrome")) {
+
             ChromeOptions options = new ChromeOptions();
             Map<String, Object> prefs = new HashMap<>();
             prefs.put("credentials_enable_service", false);
             prefs.put("profile.password_manager_enabled", false);
             prefs.put("profile.password_manager_leak_detection", false);
             options.setExperimentalOption("prefs", prefs);
+            if(browserName.contains("headless")){
+            options.addArguments("headless");
+            }
             localDriver = new ChromeDriver(options);
         } else if (browserName.equalsIgnoreCase("firefox")) {
 
