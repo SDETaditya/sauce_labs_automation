@@ -8,10 +8,11 @@ import org.testng.annotations.Test;
 import com.aditya.BaseTest;
 import com.aditya.abstract_components.AbstractComponents;
 import com.aditya.page_objects.CataloguePage;
+import com.aditya.test_components.Retry;
 
 public class ErrorValidationsTest extends BaseTest {
 
-    @Test(groups = {"ErrorValidation"})
+    @Test(groups = {"ErrorValidation"}, retryAnalyzer = Retry.class)
     public void loginErrorValidation() throws IOException, InterruptedException {
 
         String incorrect_user = AbstractComponents.getProperty("incorrect_user");

@@ -18,6 +18,13 @@ public class Listeners extends BaseTest implements ITestListener {
     ExtentTest test;
     ThreadLocal<ExtentTest> extentTest= new ThreadLocal<ExtentTest>();
 
+     @Override
+    public void onTestStart(ITestResult result) {
+
+        test = extent.createTest(result.getMethod().getMethodName());
+        extentTest.set(test);
+    }
+
     @Override
     public void onTestFailure(ITestResult result) {
         extentTest.get().fail(result.getThrowable());
@@ -40,12 +47,7 @@ public class Listeners extends BaseTest implements ITestListener {
         extentTest.get().addScreenCaptureFromPath(filePath, result.getMethod().getMethodName());
     }
 
-    @Override
-    public void onTestStart(ITestResult result) {
-
-        test = extent.createTest(result.getMethod().getMethodName());
-        extentTest.set(test);
-    }
+   
 
     @Override
     public void onTestSuccess(ITestResult result) {
