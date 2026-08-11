@@ -14,7 +14,7 @@ import com.aditya.page_objects.CataloguePage;
 import com.aditya.page_objects.CheckoutPage;
 import com.aditya.page_objects.ConfirmationPage;
 
-public class StandaloneTestCopy extends BaseTest {
+public class SubmitOrderTest extends BaseTest {
     String standard_user_email = AbstractComponents.getProperty("std_user_email");
     String login_password = AbstractComponents.getProperty("password");
     String another_user = AbstractComponents.getProperty("visual_user");
@@ -24,9 +24,9 @@ public class StandaloneTestCopy extends BaseTest {
         
         String productName = "Sauce Labs Fleece Jacket";
 
-        loginPage.loginApplication(input.get("username"), input.get("password"));
+        loginPage.get().loginApplication(input.get("username"), input.get("password"));
 
-        CataloguePage cataloguePage = new CataloguePage(driver);
+        CataloguePage cataloguePage = new CataloguePage(driver.get());
         cataloguePage.addProductToCart(productName);
         CartPage cartPage = cataloguePage.goToCart();
 
@@ -43,7 +43,7 @@ public class StandaloneTestCopy extends BaseTest {
     // public Object[][] getData() {
     //     return new Object[][] { { standard_user_email, login_password }, { another_user, login_password } };
     // }
-@DataProvider
+    @DataProvider(parallel = true)
     public Object[][] getData() {
         HashMap<String, String> data = new HashMap<>();
         data.put("username", standard_user_email);

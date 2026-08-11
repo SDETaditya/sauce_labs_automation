@@ -28,8 +28,11 @@ public class Listeners extends BaseTest implements ITestListener {
     @Override
     public void onTestFailure(ITestResult result) {
         extentTest.get().fail(result.getThrowable());
+        WebDriver localDriver = null;
         try {
-            driver = (WebDriver) result.getTestClass().getRealClass().getField("driver").get(result.getInstance());
+            @SuppressWarnings("unchecked")
+            ThreadLocal<WebDriver> threadLocalDriver = (ThreadLocal<WebDriver>) result.getTestClass().getRealClass().getField("driver").get(result.getInstance());
+            localDriver = threadLocalDriver.get();
         } catch (Exception e) {
 
             e.printStackTrace();
@@ -39,7 +42,7 @@ public class Listeners extends BaseTest implements ITestListener {
 
         String filePath = null;
         try {
-            filePath = getScreenshot(result.getMethod().getMethodName(), driver);
+            filePath = getScreenshot(result.getMethod().getMethodName(), localDriver);
         } catch (IOException e1) {
             e1.printStackTrace();
         }

@@ -12,6 +12,8 @@ import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
@@ -19,13 +21,15 @@ import com.aditya.abstract_components.AbstractComponents;
 import com.aditya.page_objects.LoginPage;
 
 public class BaseTest {
-    protected WebDriver driver;
-    protected LoginPage loginPage;
+    public static ThreadLocal<WebDriver> driver = new ThreadLocal<>();
+    public static ThreadLocal<LoginPage> loginPage = new ThreadLocal<>();
 
     public WebDriver initializeDriver() throws IOException {
-        String browserName = AbstractComponents.getProperty("browser");
-        browserName = browserName != null ? browserName : "chrome";
-        
+        String browserNameFromPropertiesFile = AbstractComponents.getProperty("browser");
+        String browserNameFromMaven = System.getProperty("browser");
+        String browserName = browserNameFromMaven != null ? browserNameFromMaven : browserNameFromPropertiesFile;
+
+        WebDriver localDriver = null;
         if (browserName.equalsIgnoreCase("chrome")) {
             ChromeOptions options = new ChromeOptions();
             Map<String, Object> prefs = new HashMap<>();
@@ -33,34 +37,47 @@ public class BaseTest {
             prefs.put("profile.password_manager_enabled", false);
             prefs.put("profile.password_manager_leak_detection", false);
             options.setExperimentalOption("prefs", prefs);
-            driver = new ChromeDriver(options);
+            localDriver = new ChromeDriver(options);
+        } else if (browserName.equalsIgnoreCase("firefox")) {
+
+            FirefoxOptions options = new FirefoxOptions();
+
+            options.addPreference("signon.rememberSignons", false);
+            options.addPreference("signon.autofillForms", false);
+            options.addPreference("signon.generation.enabled", false);
+
+            localDriver = new FirefoxDriver(options);
         }
-        
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
-        driver.manage().window().maximize();
-        return driver;
+
+        localDriver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+        localDriver.manage().window().maximize();
+        return localDriver;
     }
 
     @BeforeMethod(alwaysRun = true)
     public LoginPage launchApplication() throws IOException {
-        driver = initializeDriver();
-        loginPage = new LoginPage(driver);
-        loginPage.goTo();
-        return loginPage;
+        WebDriver localDriver = initializeDriver();
+        driver.set(localDriver);
+        LoginPage localLoginPage = new LoginPage(localDriver);
+        loginPage.set(localLoginPage);
+        localLoginPage.goTo();
+        return localLoginPage;
     }
 
     @AfterMethod(alwaysRun = true)
     public void tearDown() {
-        if (driver != null) {
-            driver.quit();
+        if (driver.get() != null) {
+            driver.get().quit();
         }
+        driver.remove();
+        loginPage.remove();
     }
 
-    public String getScreenshot(String testCaseName, WebDriver driver) throws IOException{
-        TakesScreenshot ts = (TakesScreenshot)driver;
+    public String getScreenshot(String testCaseName, WebDriver driver) throws IOException {
+        TakesScreenshot ts = (TakesScreenshot) driver;
         File source = ts.getScreenshotAs(OutputType.FILE);
-        File file = new File(System.getProperty("user.dir")+"//reports//"+testCaseName+".png");
+        File file = new File(System.getProperty("user.dir") + "//reports//" + testCaseName + ".png");
         FileUtils.copyFile(source, file);
-        return System.getProperty("user.dir")+"//reports//"+testCaseName+".png";
+        return System.getProperty("user.dir") + "//reports//" + testCaseName + ".png";
     }
 }
