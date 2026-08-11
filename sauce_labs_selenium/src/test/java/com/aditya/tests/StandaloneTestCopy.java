@@ -3,6 +3,7 @@ package com.aditya.tests;
 import java.io.IOException;
 
 import org.testng.Assert;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import com.aditya.BaseTest;
@@ -13,14 +14,15 @@ import com.aditya.page_objects.CheckoutPage;
 import com.aditya.page_objects.ConfirmationPage;
 
 public class StandaloneTestCopy extends BaseTest {
-
-    @Test
-    public void submitOrder() throws IOException, InterruptedException {
+String login_as_standard_user_email = AbstractComponents.getProperty("std_user_email");
+String login_password = AbstractComponents.getProperty("password");
+String another_user = AbstractComponents.getProperty("visual_user");
+    @Test(dataProvider = "getData", groups = "Regression")
+    public void submitOrder(String username, String password) throws IOException, InterruptedException {
         String productName = "Sauce Labs Fleece Jacket";
 
-        String login_as_standard_user_email = AbstractComponents.getProperty("std_user_email");
-        String login_password = AbstractComponents.getProperty("password");
-        loginPage.loginApplication(login_as_standard_user_email, login_password);
+        
+        loginPage.loginApplication(username, password);
 
         CataloguePage cataloguePage = new CataloguePage(driver);
         cataloguePage.addProductToCart(productName);
@@ -34,5 +36,11 @@ public class StandaloneTestCopy extends BaseTest {
         String message = confirmationPage.getConfirmationMessage();
         Assert.assertTrue(message.equalsIgnoreCase("Thank you for your order!"));
     }
+
+    @DataProvider
+    public Object[][] getData(){
+        return new Object [][]{{login_as_standard_user_email, login_password},{another_user, login_password}};
+    }
+
 
 }
