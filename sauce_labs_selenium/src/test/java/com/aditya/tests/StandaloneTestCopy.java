@@ -1,6 +1,7 @@
 package com.aditya.tests;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
@@ -14,15 +15,16 @@ import com.aditya.page_objects.CheckoutPage;
 import com.aditya.page_objects.ConfirmationPage;
 
 public class StandaloneTestCopy extends BaseTest {
-String login_as_standard_user_email = AbstractComponents.getProperty("std_user_email");
-String login_password = AbstractComponents.getProperty("password");
-String another_user = AbstractComponents.getProperty("visual_user");
+    String standard_user_email = AbstractComponents.getProperty("std_user_email");
+    String login_password = AbstractComponents.getProperty("password");
+    String another_user = AbstractComponents.getProperty("visual_user");
+
     @Test(dataProvider = "getData", groups = "Regression")
-    public void submitOrder(String username, String password) throws IOException, InterruptedException {
+    public void submitOrder(HashMap<String, String> input) throws IOException, InterruptedException {
+        
         String productName = "Sauce Labs Fleece Jacket";
 
-        
-        loginPage.loginApplication(username, password);
+        loginPage.loginApplication(input.get("username"), input.get("password"));
 
         CataloguePage cataloguePage = new CataloguePage(driver);
         cataloguePage.addProductToCart(productName);
@@ -37,10 +39,19 @@ String another_user = AbstractComponents.getProperty("visual_user");
         Assert.assertTrue(message.equalsIgnoreCase("Thank you for your order!"));
     }
 
-    @DataProvider
-    public Object[][] getData(){
-        return new Object [][]{{login_as_standard_user_email, login_password},{another_user, login_password}};
+    // @DataProvider
+    // public Object[][] getData() {
+    //     return new Object[][] { { standard_user_email, login_password }, { another_user, login_password } };
+    // }
+@DataProvider
+    public Object[][] getData() {
+        HashMap<String, String> data = new HashMap<>();
+        data.put("username", standard_user_email);
+        data.put("password", login_password);
+
+        HashMap<String, String> data1 = new HashMap<>();
+        data1.put("username", another_user);
+        data1.put("password", login_password);
+        return new Object [] [] {{data},{data1}};
     }
-
-
 }
