@@ -23,7 +23,7 @@ public class ErrorValidationsTest extends BaseTest {
         Assert.assertEquals(loginPage.getErrorMessage(), expectedErrorMessage);
     }
 
-    @Test(groups = {"ErrorValidation"})
+    @Test()
     public void catalogueCountValidation() throws IOException, InterruptedException {
         String login_as_standard_user_email = AbstractComponents.getProperty("std_user_email");
         String login_password = AbstractComponents.getProperty("password");

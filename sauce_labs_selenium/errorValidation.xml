@@ -3,15 +3,11 @@
 <suite name="Suite" parallel="tests">
   <groups>
     <run>
-      <include name="Regression"></include>
+      <include name="ErrorValidation"></include>
     </run>
   </groups>
-  <test thread-count="5" name="Purchase Order Test" >
-    <classes>
-      <class name="com.aditya.tests.StandaloneTestCopy"/>
-    </classes>
-  </test>
-  <test thread-count="5" name="Erro Validation Test" >
+
+  <test thread-count="5" name="Error Validation Test" >
     <classes>
       <class name="com.aditya.tests.ErrorValidationsTest"/>
     </classes>
