@@ -2,6 +2,7 @@ package com.aditya;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,12 +15,14 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
 import com.aditya.abstract_components.AbstractComponents;
 import com.aditya.page_objects.LoginPage;
 
+@SuppressWarnings("null")
 public class BaseTest {
     public static ThreadLocal<WebDriver> driver = new ThreadLocal<>();
     public static ThreadLocal<LoginPage> loginPage = new ThreadLocal<>();
@@ -28,6 +31,13 @@ public class BaseTest {
         String browserNameFromPropertiesFile = AbstractComponents.getProperty("browser");
         String browserNameFromMaven = System.getProperty("browser");
         String browserName = browserNameFromMaven != null ? browserNameFromMaven : browserNameFromPropertiesFile;
+
+        String executionModeFromMaven = System.getProperty("executionMode");
+        String executionMode = executionModeFromMaven != null ? executionModeFromMaven : AbstractComponents.getProperty("executionMode");
+
+        String gridUrlFromMaven = System.getProperty("gridUrl");
+        String gridUrlStr = gridUrlFromMaven != null ? gridUrlFromMaven : AbstractComponents.getProperty("gridUrl");
+        URL gridUrl = new URL(gridUrlStr != null ? gridUrlStr : "http://localhost:4444");
 
         WebDriver localDriver = null;
         if (browserName.contains("chrome")) {
@@ -41,7 +51,12 @@ public class BaseTest {
             if(browserName.contains("headless")){
             options.addArguments("headless");
             }
-            localDriver = new ChromeDriver(options);
+
+            if ("grid".equalsIgnoreCase(executionMode)) {
+                localDriver = new RemoteWebDriver(gridUrl, options);
+            } else {
+                localDriver = new ChromeDriver(options);
+            }
         } else if (browserName.equalsIgnoreCase("firefox")) {
 
             FirefoxOptions options = new FirefoxOptions();
@@ -50,7 +65,15 @@ public class BaseTest {
             options.addPreference("signon.autofillForms", false);
             options.addPreference("signon.generation.enabled", false);
 
-            localDriver = new FirefoxDriver(options);
+            if ("grid".equalsIgnoreCase(executionMode)) {
+                localDriver = new RemoteWebDriver(gridUrl, options);
+            } else {
+                localDriver = new FirefoxDriver(options);
+            }
+        }
+
+        if (localDriver == null) {
+            throw new IllegalArgumentException("Unsupported browser: " + browserName);
         }
 
         localDriver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));

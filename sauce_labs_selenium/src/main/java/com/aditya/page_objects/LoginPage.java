@@ -6,6 +6,7 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import com.aditya.abstract_components.AbstractComponents;
 
+@SuppressWarnings("null")
 public class LoginPage extends AbstractComponents {
 
     public LoginPage(WebDriver driver){

@@ -8,6 +8,7 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import com.aditya.abstract_components.AbstractComponents;
 
+@SuppressWarnings("null")
 public class CataloguePage extends AbstractComponents {
 
     public CataloguePage(WebDriver driver) {
